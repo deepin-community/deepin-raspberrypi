@@ -1,0 +1,15 @@
+sudo
+vim
+bash-completion
+ca-certificates
+deepin-keyring
+apt
+parted
+neofetch
+network-manager
+htop
+systemd-timesyncd
+curl
+screen
+locales
+ssh
