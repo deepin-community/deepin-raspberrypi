@@ -33,7 +33,12 @@ cd linux
 KERNEL=kernel8
 make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- bcm2711_defconfig
 ```
-
+树莓派5本机编译则为：
+```bash
+cd linux
+KERNEL=kernel_2712
+make bcm2712_defconfig
+```
 使用配置构建，对于所有 64 位版本
 
 ```bash
