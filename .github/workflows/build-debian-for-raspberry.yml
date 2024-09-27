@@ -32,7 +32,6 @@ jobs:
     - name: Build image
       env:
         ROOTFS: "/tmp/rootfs"
-        DISKIMG: "deepin-raspberrypi.img"
         TARGET_DEVICE: raspberrypi
         ARCH: "arm64"
       run: |
@@ -43,6 +42,6 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: deepin-raspberrypi
-        path: ${{ env.DISKIMG }}
+        path: ./deepin-raspberrypi.img
         if-no-files-found: warn
         include-hidden-files: false
