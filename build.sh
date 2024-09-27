@@ -30,7 +30,7 @@ sudo mmdebstrap \
     $ROOTFS \
     "${REPOS[@]}"
 
-sudo echo "deepin-$ARCH-$TARGET_DEVICE" | sudo tee $ROOTFS/etc/hostname > /dev/null
+sudo echo "deepin-$TARGET_DEVICE" | sudo tee $ROOTFS/etc/hostname > /dev/null
 
 # 创建磁盘文件
 dd if=/dev/zero of=$DISKIMG bs=1M count=$IMAGE_SIZE
