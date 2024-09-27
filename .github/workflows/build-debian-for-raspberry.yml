@@ -1,0 +1,36 @@
+name: Build Debian for Raspberry Pi
+
+on:
+  push:
+    branches:
+      - main  # 或者是你的默认分支名称
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Setup environment
+      run: |
+        sudo apt update -y
+        sudo apt-get install -y qemu-user-static binfmt-support mmdebstrap arch-test usrmerge usr-is-merged qemu-system-misc systemd-container
+
+    - name: Build image
+      env:
+        ROOTFS: "/tmp/rootfs"
+        DISKIMG: "deepin-raspberrypi.img"
+      run: |
+        chmod +x ./build.sh
+        ./build.sh
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: deepin-raspberrypi
+        path: ${{ env.DISKIMG }}
