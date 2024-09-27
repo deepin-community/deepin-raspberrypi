@@ -1,36 +1,38 @@
-name: Build Debian for Raspberry Pi
+name: Build Deepin for Raspberry Pi
 
 on:
   push:
     branches:
-      - master  # 或者是你的默认分支名称
+      - main  # 或者是你的默认分支名称
   pull_request:
     branches:
-      - master
+      - main
 
 jobs:
   build:
-    runs-on: ubuntu-latest  # 使用预构建的ARM64环境
+    runs-on: ubuntu-latest
 
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
 
+    - name: Setup QEMU
+      run: |
+        sudo apt update -y
+        sudo apt-get install -y qemu-user-static binfmt-support
+        # 添加 QEMU 用户静态二进制文件的支持
+        docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+
     - name: Install dependencies
       run: |
         sudo apt update -y
-        sudo apt-get install -y qemu-user-static binfmt-support mmdebstrap arch-test usrmerge qemu-system-misc systemd-container
+        sudo apt-get install -y mmdebstrap arch-test usrmerge qemu-system-misc systemd-container
 
-    - name: Prepare build environment
-      run: |
-        mkdir -p ./profiles
-        echo "package-list-goes-here" > ./profiles/packages.txt
-        echo "deb [arch=arm64] http://deb.debian.org/debian buster main contrib non-free" > ./profiles/sources.list
 
     - name: Build image
       env:
         ROOTFS: "/tmp/rootfs"
-        DISKIMG: "debian-raspberrypi.img"
+        DISKIMG: "deepin-raspberrypi.img"
         TARGET_DEVICE: raspberrypi
         ARCH: "arm64"
       run: |
@@ -40,5 +42,7 @@ jobs:
     - name: Upload artifact
       uses: actions/upload-artifact@v3
       with:
-        name: debian-raspberrypi
+        name: deepin-raspberrypi
         path: ${{ env.DISKIMG }}
+        if-no-files-found: warn
+        include-hidden-files: false
