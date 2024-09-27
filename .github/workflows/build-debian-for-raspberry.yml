@@ -10,21 +10,29 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
-    
+    runs-on: [ubuntu-latest, arm64]  # 使用预构建的ARM64环境
+
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    - name: Setup environment
+    - name: Install dependencies
       run: |
         sudo apt update -y
-        sudo apt-get install -y qemu-user-static binfmt-support mmdebstrap arch-test usrmerge usr-is-merged qemu-system-misc systemd-container
+        sudo apt-get install -y qemu-user-static binfmt-support mmdebstrap arch-test usrmerge qemu-system-misc systemd-container
+
+    - name: Prepare build environment
+      run: |
+        mkdir -p ./profiles
+        echo "package-list-goes-here" > ./profiles/packages.txt
+        echo "deb [arch=arm64] http://deb.debian.org/debian buster main contrib non-free" > ./profiles/sources.list
 
     - name: Build image
       env:
         ROOTFS: "/tmp/rootfs"
-        DISKIMG: "deepin-raspberrypi.img"
+        DISKIMG: "debian-raspberrypi.img"
+        TARGET_DEVICE: raspberrypi
+        ARCH: "arm64"
       run: |
         chmod +x ./build.sh
         ./build.sh
@@ -32,5 +40,5 @@ jobs:
     - name: Upload artifact
       uses: actions/upload-artifact@v3
       with:
-        name: deepin-raspberrypi
+        name: debian-raspberrypi
         path: ${{ env.DISKIMG }}
