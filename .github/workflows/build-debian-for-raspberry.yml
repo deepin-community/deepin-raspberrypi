@@ -10,7 +10,7 @@ on:
 
 jobs:
   build:
-    runs-on: [ubuntu-latest, arm64]  # 使用预构建的ARM64环境
+    runs-on: ubuntu-latest  # 使用预构建的ARM64环境
 
     steps:
     - name: Checkout repository
