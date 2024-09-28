@@ -20,3 +20,4 @@ lshw
 iproute2
 iptables
 procps
+git

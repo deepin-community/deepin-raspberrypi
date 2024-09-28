@@ -32,6 +32,24 @@ sudo mmdebstrap \
 
 sudo echo "deepin-$TARGET_DEVICE" | sudo tee $ROOTFS/etc/hostname > /dev/null
 
+# 进入根文件系统，生成 systemd 服务文件
+sudo tee $TMP/etc/systemd/system/raspi-config.service << EOF
+[Unit]
+Description=Run raspi-config at boot
+After=multi-user.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/raspi-config
+StandardOutput=tty
+RemainAfterExit=yes
+[Install]
+WantedBy=multi-user.target
+EOF
+
+# 启用 raspi-config 服务
+sudo chroot $TMP systemctl enable raspi-config.service
+
 # 创建磁盘文件
 dd if=/dev/zero of=$DISKIMG bs=1M count=$IMAGE_SIZE
 sudo fdisk deepin-raspberrypi.img << EOF
@@ -60,6 +78,8 @@ sudo mount "${LOOP}p2" $TMP
 sudo cp -r $ROOTFS/* $TMP
 
 sudo mount "${LOOP}p1" $TMP/boot
+
+
 # 在物理设备上需要添加 cmdline.txt 定义 Linux内核启动时的命令行参数
 PTUUID=$(sudo blkid $LOOP | awk -F'PTUUID="' '{print $2}' | awk -F'"' '{print $1}')
 echo "console=serial0,115200 console=tty1 root=PARTUUID=$PTUUID-02 rootfstype=ext4 elevator=deadline fsck.repair=yes rootwait quiet init=/usr/lib/raspi-config/init_resize.sh" | sudo tee $TMP/boot/cmdline.txt
