@@ -22,7 +22,7 @@ mkdir -p $ROOTFS
 sudo mmdebstrap \
     --hook-dir=/usr/share/mmdebstrap/hooks/merged-usr \
     --skip=check/empty \
-    --include=$PACKAGES \
+    --include=$PACKAGES,coreutils,base-files \
     --components="main,commercial,community" \
     --architectures=${ARCH} \
     --customize=./profiles/stage-second.sh \
