@@ -32,24 +32,6 @@ sudo mmdebstrap \
 
 sudo echo "deepin-$TARGET_DEVICE" | sudo tee $ROOTFS/etc/hostname > /dev/null
 
-# 进入根文件系统，生成 systemd 服务文件
-sudo tee $TMP/etc/systemd/system/raspi-config.service << EOF
-[Unit]
-Description=Run raspi-config at boot
-After=multi-user.target
-
-[Service]
-Type=simple
-ExecStart=/usr/bin/raspi-config
-StandardOutput=tty
-RemainAfterExit=yes
-[Install]
-WantedBy=multi-user.target
-EOF
-
-# 启用 raspi-config 服务
-sudo chroot $TMP systemctl enable raspi-config.service
-
 # 创建磁盘文件
 dd if=/dev/zero of=$DISKIMG bs=1M count=$IMAGE_SIZE
 sudo fdisk deepin-raspberrypi.img << EOF
@@ -108,6 +90,24 @@ sudo chroot $TMP /usr/bin/env bash -e -o pipefail -c "apt update -y"
 sudo chroot $TMP /usr/bin/env bash -e -o pipefail -c "curl http://archive.raspberrypi.org/debian/pool/main/r/raspi-config/raspi-config_20240708_all.deb -o /tmp/raspi-config.deb"
 sudo chroot $TMP /usr/bin/env bash -e -o pipefail -c "apt update -y && apt install -y /tmp/raspi-config.deb"
 sudo chroot $TMP /usr/bin/env bash -e -o pipefail -c "rm /tmp/raspi-config.deb"
+
+# 进入根文件系统，生成 systemd 服务文件
+sudo tee $TMP/etc/systemd/system/raspi-config.service << EOF
+[Unit]
+Description=Run raspi-config at boot
+After=multi-user.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/raspi-config
+StandardOutput=tty
+RemainAfterExit=yes
+[Install]
+WantedBy=multi-user.target
+EOF
+
+# 启用 raspi-config 服务
+sudo chroot $TMP systemctl enable raspi-config.service
 
 # 在根文件系统中安装桌面环境
 sudo chroot $ROOTFS /usr/bin/env bash -e -o pipefail -c "apt update -y && apt install -y deepin-desktop-environment-base deepin-desktop-environment-cli deepin-desktop-environment-core deepin-desktop-environment-extras"
