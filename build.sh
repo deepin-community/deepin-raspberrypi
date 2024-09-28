@@ -57,6 +57,9 @@ sudo mkfs.ext4 "${LOOP}p2" # 根分区 (/)
 
 TMP=`mktemp -d`
 sudo mount "${LOOP}p2" $TMP
+
+sudo mkdir -p $TMP/boot
+
 sudo cp -r $ROOTFS/* $TMP
 
 sudo mount "${LOOP}p1" $TMP/boot
