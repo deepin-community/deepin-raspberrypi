@@ -7,7 +7,7 @@ ROOTFS=`mktemp -d`
 TARGET_DEVICE=raspberrypi
 ARCH="arm64"
 DISKIMG="deepin-$TARGET_DEVICE.img"
-IMAGE_SIZE=2048
+IMAGE_SIZE=4096
 COMPONENTS="main,commercial community"
 readarray -t REPOS < ./profiles/sources.list
 PACKAGES=`cat ./profiles/packages.txt | grep -v "^-" | xargs | sed -e 's/ /,/g'`
