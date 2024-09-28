@@ -109,6 +109,9 @@ sudo chroot $TMP /usr/bin/env bash -e -o pipefail -c "curl http://archive.raspbe
 sudo chroot $TMP /usr/bin/env bash -e -o pipefail -c "apt update -y && apt install -y /tmp/raspi-config.deb"
 sudo chroot $TMP /usr/bin/env bash -e -o pipefail -c "rm /tmp/raspi-config.deb"
 
+# 在根文件系统中安装桌面环境
+sudo chroot $ROOTFS /usr/bin/env bash -e -o pipefail -c "apt update -y && apt install -y deepin-desktop-environment-base deepin-desktop-environment-cli deepin-desktop-environment-core deepin-desktop-environment-extras"
+
 sudo umount -l $TMP
 sudo losetup -D $LOOP
 sudo rm -rf $TMP $ROOTFS
