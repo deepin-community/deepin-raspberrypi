@@ -81,6 +81,9 @@ sudo mount -t sysfs chsys $TMP/sys
 sudo mount -t tmpfs -o "size=99%" tmpfs $TMP/tmp
 sudo mount -t tmpfs -o "size=99%" tmpfs $TMP/var/tmp
 
+# 进入 chroot 环境后，更新包列表
+sudo chroot $TMP /usr/bin/env bash -e -o pipefail -c "apt update -y"
+
 # 安装树莓派的 raspi-config
 sudo chroot $TMP /usr/bin/env bash -e -o pipefail -c "curl http://archive.raspberrypi.org/debian/pool/main/r/raspi-config/raspi-config_20240313_all.deb -o /tmp/raspi-config.deb"
 sudo chroot $TMP /usr/bin/env bash -e -o pipefail -c "apt update -y && apt install -y /tmp/raspi-config.deb"
