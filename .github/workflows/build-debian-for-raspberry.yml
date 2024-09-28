@@ -16,14 +16,9 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    steps:
-    - name: Set up QEMU
-      uses: docker/setup-qemu-action@v3
-      run: |
-        sudo apt update -y
-        sudo apt-get install -y qemu-user-static binfmt-support
-        # 添加 QEMU 用户静态二进制文件的支持
-        docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+      steps:
+        - name: Set up QEMU
+          uses: docker/setup-qemu-action@v3
 
     - name: Install dependencies
       run: |
