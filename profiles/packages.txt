@@ -21,3 +21,4 @@ iproute2
 iptables
 procps
 git
+firefox
