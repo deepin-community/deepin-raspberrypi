@@ -164,31 +164,12 @@ qemu-system-aarch64 -machine type=raspi3b \
 
 # 安装桌面环境
 
-arm 的稳定源可能缺一些包，先添加上构建用的 ci
-
-```bash
-sudo vim /etc/apt/sources.list
-```
-
-```bash
-deb [trusted=yes] https://ci.deepin.com/repo/obs/deepin:/Develop:/main/standard/ ./
-deb-src [trusted=yes] https://ci.deepin.com/repo/obs/deepin:/Develop:/main/standard/ ./
-deb [trusted=yes] https://ci.deepin.com/repo/obs/deepin:/Develop:/community/deepin_develop/ ./
-deb-src [trusted=yes] https://ci.deepin.com/repo/obs/deepin:/Develop:/community/deepin_develop/ ./
-deb [trusted=yes] https://ci.deepin.com/repo/obs/deepin:/Develop:/dde/deepin_develop/ ./
-deb-src [trusted=yes] https://ci.deepin.com/repo/obs/deepin:/Develop:/dde/deepin_develop/ ./
-```
-
 ```bash
 sudo apt update && sudo apt upgrade
 ```
 
 ```bash
-sudo apt install deepin-desktop-environment-base
-sudo apt install deepin-desktop-environment-cli
-sudo apt install deepin-desktop-environment-core
-sudo apt install deepin-desktop-environment-extras
-sudo apt install deepin-desktop-environment-ll
+export DEBIAN_FRONTEND=noninteractivesudo apt updatesudo apt install deepin-desktop-environment-base \    deepin-desktop-environment-cli \    deepin-desktop-environment-core \    deepin-desktop-environment-extras
 ```
 
 安装完重启树莓派。
