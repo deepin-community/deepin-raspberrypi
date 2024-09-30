@@ -16,11 +16,7 @@ locale-gen
 DEBIAN_FRONTEND=noninteractive dpkg-reconfigure locales
 "
 
-# 设置用户和密码
+# 设置root用户密码
 run_in_chroot "
-useradd -m -g users deepin && usermod -a -G sudo deepin
-chsh -s /bin/bash deepin
-
-echo root:deepin | chpasswd
-echo deepin:deepin | chpasswd
+echo root:root | chpasswd
 "

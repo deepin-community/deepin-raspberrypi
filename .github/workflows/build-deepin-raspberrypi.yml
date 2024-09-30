@@ -1,0 +1,63 @@
+name: build rootfs
+
+on:
+  push:
+    branches: [ 'master' ]
+    paths:
+      - 'build.sh'
+      - 'profiles/**'
+      - 'firmware/**'
+      - 'version.txt'
+  pull_request:
+    branches: [ 'master' ]
+    types: [closed]
+    paths:
+      - 'build.sh'
+      - 'profiles/**'
+      - 'firmware/**'
+      - 'version.txt'
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build img
+    runs-on: ubuntu-22.04
+    env:
+      GITHUB_TOKEN: ${{ secrets.ACTION_TOKEN }}
+
+    steps:
+      - name: Maximize build space
+        uses: easimon/maximize-build-space@master
+        with:
+          # 这个值是保留给系统的空间大小，之前设置太小，总会在安装依赖或者编译过程中报设备空间不足的错误而导致编译失败
+          root-reserve-mb: 4096
+          swap-size-mb: 512
+          remove-dotnet: 'true'
+          remove-android: 'true'
+          remove-codeql: 'true'
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: update source and add binfmts # 更新源到 noble
+        run: |
+          curl https://community-packages.deepin.com/deepin/beige/pool/main/d/deepin-keyring/deepin-keyring_2024.01.16_all.deb --output deepin-keyring.deb
+          sudo apt install ./deepin-keyring.deb && rm ./deepin-keyring.deb
+          echo "deb https://community-packages.deepin.com/beige/ beige main commercial community" | sudo tee -a /etc/apt/sources.list
+
+          sudo sed -i 's/jammy/noble/g' /etc/apt/sources.list
+          sudo apt update -y && sudo apt install mmdebstrap qemu-user-static usrmerge qemu-user systemd
+          # sudo apt-mark hold usrmerge
+          sudo systemctl restart systemd-binfmt
+
+      - name: Run build.sh
+        run: |
+          ./build.sh desktop
+          xz -z deepin-raspberrypi.img
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: deepin-raspberrypi.img.xz
+          path: deepin-raspberrypi.img.xz
+          if-no-files-found: ignore
